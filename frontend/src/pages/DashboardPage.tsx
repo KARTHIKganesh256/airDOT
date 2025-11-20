@@ -70,13 +70,6 @@ export default function DashboardPage() {
     );
   }, [latest, selectedCity]);
 
-  // Check if API is not configured or unavailable
-  const apiError = latestError && (
-    (latestError as any).apiNotConfigured || 
-    (latestError as any).networkError ||
-    (latestError as any).code === "ERR_NETWORK"
-  );
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -84,26 +77,6 @@ export default function DashboardPage() {
       transition={{ duration: 0.4 }}
       className="space-y-8"
     >
-      {apiError && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-orange-500/50 bg-orange-500/10 p-4 text-sm text-orange-200"
-        >
-          <p className="font-semibold">⚠️ API Connection Required</p>
-          <p className="mt-1 text-orange-300/80">
-            The backend API is not configured. To see live data, please:
-          </p>
-          <ul className="mt-2 ml-4 list-disc space-y-1 text-orange-300/70">
-            <li>Deploy your backend API to a hosting service (e.g., Railway, Render, Heroku)</li>
-            <li>Set the <code className="bg-black/20 px-1 rounded">VITE_API_URL</code> secret in GitHub repository settings</li>
-            <li>Or run the backend locally and use the development version</li>
-          </ul>
-          <p className="mt-2 text-xs text-orange-300/60">
-            See <code className="bg-black/20 px-1 rounded">DEPLOYMENT.md</code> for detailed instructions.
-          </p>
-        </motion.div>
-      )}
       <section className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="text-3xl font-semibold text-white">

@@ -16,7 +16,7 @@ export function useLatest() {
     queryKey: ["latest"],
     queryFn: () => fetcher<LatestPayload>("/latest"),
     refetchInterval: FIVE_SECONDS,
-    retry: false,
+    retry: 1,
     refetchOnWindowFocus: false,
   });
 }
@@ -36,6 +36,7 @@ export function useHistory(city: string, limit = 200) {
       return response.readings;
     },
     refetchInterval: ONE_MINUTE,
+    retry: 1,
   });
 }
 
@@ -47,6 +48,7 @@ export function useForecast(city?: string) {
         `/predict${city ? `?city=${encodeURIComponent(city)}` : ""}`,
       ),
     refetchInterval: ONE_MINUTE,
+    retry: 1,
   });
 }
 
@@ -55,6 +57,7 @@ export function useMapData() {
     queryKey: ["mapdata"],
     queryFn: () => fetcher<MapData>("/mapdata"),
     refetchInterval: ONE_MINUTE,
+    retry: 1,
   });
 }
 
