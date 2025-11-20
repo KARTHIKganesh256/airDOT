@@ -21,17 +21,36 @@
    - Once complete, your site will be live at:
      **https://KARTHIKganesh256.github.io/airDOT/**
 
-## Setting API URL (Optional)
+## Setting API URL (REQUIRED for Live Data)
 
-If your backend API is hosted elsewhere, set it as a secret:
+**IMPORTANT:** The frontend needs a backend API to display data. Without it, you'll see "Connecting..." and no values.
 
-1. Go to **Settings** → **Secrets and variables** → **Actions**
-2. Click **New repository secret**
-3. Name: `VITE_API_URL`
-4. Value: Your API URL (e.g., `https://your-api.com/api`)
-5. Save
+### Option 1: Deploy Backend First (Recommended)
 
-The workflow will use this URL when building the frontend.
+1. **Deploy your Flask backend** to a hosting service:
+   - [Railway](https://railway.app) (free tier available)
+   - [Render](https://render.com) (free tier available)
+   - [Heroku](https://heroku.com)
+   - [PythonAnywhere](https://www.pythonanywhere.com)
+
+2. **Get your API URL** (e.g., `https://your-app.railway.app/api`)
+
+3. **Set it as a GitHub Secret:**
+   - Go to your repository: https://github.com/KARTHIKganesh256/airDOT
+   - Click **Settings** → **Secrets and variables** → **Actions**
+   - Click **New repository secret**
+   - Name: `VITE_API_URL`
+   - Value: Your API URL (e.g., `https://your-app.railway.app/api`)
+   - Click **Add secret**
+
+4. **Redeploy:**
+   - Go to **Actions** tab
+   - Click **Deploy to GitHub Pages** workflow
+   - Click **Run workflow** → **Run workflow**
+
+### Option 2: Use Local Development
+
+For local testing, run both backend and frontend locally (see main README).
 
 ## Local Testing
 

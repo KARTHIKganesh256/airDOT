@@ -16,6 +16,8 @@ export function useLatest() {
     queryKey: ["latest"],
     queryFn: () => fetcher<LatestPayload>("/latest"),
     refetchInterval: FIVE_SECONDS,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 }
 
