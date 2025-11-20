@@ -17,9 +17,11 @@ const queryClient = new QueryClient({
   },
 });
 
+const basename = import.meta.env.BASE_URL || "/airDOT/";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <App />

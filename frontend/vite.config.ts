@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react()],
   envPrefix: "VITE_",
+  base: "/airDOT/",
   server: {
     port: 5173,
     proxy: {
@@ -14,6 +15,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: "dist",
     chunkSizeWarningLimit: 1024,
     rollupOptions: {
       output: {
