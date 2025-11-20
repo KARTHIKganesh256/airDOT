@@ -13,7 +13,11 @@ from .config import get_settings
 @lru_cache
 def get_client() -> MongoClient[Any]:
     settings = get_settings()
-    return MongoClient(settings.mongo_uri)
+    # return MongoClient(settings.mongo_uri, serverSelectionTimeoutMS=2000)
+    # Fallback to Mock DB for this environment
+    from .mock_db import MockClient
+    print("WARNING: Using Mock Database")
+    return MockClient(settings.mongo_uri)
 
 
 def get_database() -> Database[Any]:

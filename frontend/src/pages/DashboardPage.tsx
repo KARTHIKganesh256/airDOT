@@ -139,7 +139,7 @@ export default function DashboardPage() {
         </Suspense>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <section id="heatmap" className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Suspense
           fallback={<ChartFallback title="City Air Quality Heatmap" className="h-[420px]" />}
         >
@@ -183,4 +183,3 @@ export default function DashboardPage() {
     </motion.div>
   );
 }
-

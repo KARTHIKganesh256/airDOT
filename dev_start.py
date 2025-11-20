@@ -47,7 +47,7 @@ def main() -> None:
 
         print("Starting AeroSense frontend (Vite dev server)…")
         frontend_process = subprocess.Popen(
-            ["npm", "run", "dev"],
+            ["npm.cmd" if os.name == "nt" else "npm", "run", "dev"],
             cwd=str(FRONTEND_DIR),
         )
         processes.append(frontend_process)

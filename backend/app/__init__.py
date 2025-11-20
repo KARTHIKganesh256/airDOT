@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import atexit
+import os
 
 from flask import Flask
 from flask_cors import CORS
@@ -31,7 +32,7 @@ def create_app() -> Flask:
     def root() -> dict[str, str]:
         return {"message": "AeroSense API"}
 
-    if not scheduler.running:
+    if os.environ.get("NO_SCHEDULER") != "true" and not scheduler.running:
         scheduler.start()
 
     atexit.register(lambda: scheduler.shutdown(wait=False) if scheduler.running else None)
@@ -39,7 +40,7 @@ def create_app() -> Flask:
     return app
 
 
-app = create_app()
+
 
 
 
