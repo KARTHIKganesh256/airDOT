@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-surface-light font-sans text-slate-900 antialiased transition-colors duration-300 ease-out dark:bg-surface dark:text-slate-100;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}

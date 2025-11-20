@@ -1,0 +1,85 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "Telangana",
+        "district": "Hyderabad"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.3500, 17.2500],
+            [78.6500, 17.2500],
+            [78.6500, 17.5500],
+            [78.3500, 17.5500],
+            [78.3500, 17.2500]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "Telangana",
+        "district": "Warangal"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [79.3000, 17.7000],
+            [79.6000, 17.7000],
+            [79.6000, 18.0000],
+            [79.3000, 18.0000],
+            [79.3000, 17.7000]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "Andhra Pradesh",
+        "district": "Visakhapatnam"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [82.9000, 17.3000],
+            [83.4000, 17.3000],
+            [83.4000, 17.8000],
+            [82.9000, 17.8000],
+            [82.9000, 17.3000]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "Andhra Pradesh",
+        "district": "Vijayawada"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.4000, 16.3000],
+            [80.8000, 16.3000],
+            [80.8000, 16.6000],
+            [80.4000, 16.6000],
+            [80.4000, 16.3000]
+          ]
+        ]
+      }
+    }
+  ]
+}
+
+
+
+
