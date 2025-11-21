@@ -12,10 +12,15 @@ interface RealTimeAQIChartProps {
   city?: string;
 }
 
-function buildGradient(ctx: CanvasRenderingContext2D) {
-  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient.addColorStop(0, "rgba(0, 224, 255, 0.4)");
-  gradient.addColorStop(0.5, "rgba(0, 224, 255, 0.15)");
+function buildGradient(ctx: CanvasRenderingContext2D, chartArea?: { bottom: number; top: number }) {
+  if (!chartArea) {
+    return "rgba(0, 224, 255, 0.2)";
+  }
+  
+  const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  gradient.addColorStop(0, "rgba(0, 224, 255, 0.5)");
+  gradient.addColorStop(0.3, "rgba(0, 224, 255, 0.25)");
+  gradient.addColorStop(0.6, "rgba(0, 224, 255, 0.1)");
   gradient.addColorStop(1, "rgba(0, 224, 255, 0.02)");
   return gradient;
 }
@@ -42,14 +47,20 @@ export function RealTimeAQIChart({
         borderColor: "rgba(0, 224, 255, 1)",
         borderWidth: 2.5,
         pointRadius: 0,
-        pointHoverRadius: 5,
-        pointHoverBorderWidth: 2,
+        pointHoverRadius: 6,
+        pointHoverBorderWidth: 3,
         pointHoverBackgroundColor: "rgba(0, 224, 255, 1)",
         pointHoverBorderColor: "#ffffff",
-        fill: true,
+        fill: "origin" as const,
         tension: 0.4,
-        backgroundColor: (context: { chart: { ctx: CanvasRenderingContext2D } }) =>
-          buildGradient(context.chart.ctx),
+        backgroundColor: (context: { chart: { ctx: CanvasRenderingContext2D; chartArea?: { bottom: number; top: number } } }) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) {
+            return "rgba(0, 224, 255, 0.2)";
+          }
+          return buildGradient(ctx, chartArea);
+        },
       },
     ],
   };
@@ -136,6 +147,7 @@ export function RealTimeAQIChart({
       },
       y: {
         beginAtZero: false,
+        stacked: false,
         ticks: {
           color: "#94a3b8",
           font: {
