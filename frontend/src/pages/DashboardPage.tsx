@@ -51,16 +51,21 @@ export default function DashboardPage() {
   const { data: latest, isLoading: isLatestLoading, error: latestError } = useLatest();
   const { data: mapData } = useMapData();
 
-  const [selectedCity, setSelectedCity] = useState<string | undefined>();
+  // Default to first city from latest data, or use a fallback
+  const defaultCity = latest?.readings?.[0]?.city || "Hyderabad";
+  const [selectedCity, setSelectedCity] = useState<string>(defaultCity);
 
   useEffect(() => {
-    if (!selectedCity && latest?.readings?.length) {
+    if (latest?.readings?.length && !selectedCity) {
+      setSelectedCity(latest.readings[0].city);
+    } else if (latest?.readings?.length && !latest.readings.find(r => r.city === selectedCity)) {
+      // If selected city is not in the list, use first available
       setSelectedCity(latest.readings[0].city);
     }
   }, [latest, selectedCity]);
 
-  const historyQuery = useHistory(selectedCity ?? "", 200);
-  const forecastQuery = useForecast(selectedCity);
+  const historyQuery = useHistory(selectedCity || defaultCity, 200);
+  const forecastQuery = useForecast(selectedCity || defaultCity);
 
   const latestReading: SensorReading | undefined = useMemo(() => {
     if (!latest?.readings) return undefined;

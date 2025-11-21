@@ -15,16 +15,21 @@ export function ForecastChart({ points = [] }: ForecastChartProps) {
       new Date(a.target_time).getTime() - new Date(b.target_time).getTime(),
   );
 
+  const chartData = sorted.length > 0 ? sorted.map((point) => ({
+    x: new Date(point.target_time).getTime(),
+    y: point.predicted_aqi,
+  })) : [];
+
   const data: ChartData<"line"> = {
-    labels: sorted.map((point) => point.target_time),
     datasets: [
       {
         label: "Predicted AQI",
-        data: sorted.map((point) => point.predicted_aqi),
+        data: chartData,
         borderColor: "#8b5cf6",
         borderWidth: 2,
         pointRadius: 3,
         pointBackgroundColor: "#c084fc",
+        pointHoverRadius: 5,
         tension: 0.3,
         fill: false,
       },

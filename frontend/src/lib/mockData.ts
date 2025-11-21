@@ -111,22 +111,39 @@ export function getMockHistory(city: string, limit: number = 200): SensorReading
   const cityData = MOCK_CITIES.find((c) => c.city === city) || MOCK_CITIES[0];
   const readings: SensorReading[] = [];
   const now = new Date();
+  const baseAQI = getAQIForCity(cityData.city);
+
+  // Generate more recent data (last 24-48 hours with more frequent readings)
+  const hoursBack = Math.min(limit / 4, 48); // Generate data for last 48 hours max
+  const intervalMinutes = (hoursBack * 60) / limit; // Distribute readings evenly
 
   for (let i = limit - 1; i >= 0; i--) {
-    const timestamp = new Date(now.getTime() - i * 60 * 60 * 1000); // Hourly data
+    const minutesBack = i * intervalMinutes;
+    const timestamp = new Date(now.getTime() - minutesBack * 60 * 1000);
+    
+    // Create base reading
     const baseReading = generateMockReading(cityData);
-    // Add some variation to historical data
-    const variation = (Math.random() - 0.5) * 10;
-    const aqi = Math.max(0, Math.min(500, baseReading.aqi + variation));
+    
+    // Add realistic variation with daily pattern
+    const hourOfDay = timestamp.getHours();
+    const dailyPattern = 1 + 0.2 * Math.sin((hourOfDay - 6) * Math.PI / 12);
+    const variation = (Math.random() - 0.5) * 8;
+    const aqi = Math.max(0, Math.min(500, Math.round(baseAQI * dailyPattern + variation)));
 
     readings.push({
       ...baseReading,
       id: `mock-${city.toLowerCase()}-${i}`,
+      city: cityData.city,
+      state: cityData.state,
       timestamp: timestamp.toISOString(),
-      aqi: Math.round(aqi),
+      aqi: aqi,
       category: getCategory(aqi),
       color: getColor(getCategory(aqi)),
-      pm25: Math.max(0, baseReading.pm25 + variation / 2),
+      health: getHealth(getCategory(aqi)),
+      pm25: Math.max(0, Math.round((aqi / 2) * 10) / 10 + (Math.random() - 0.5) * 2),
+      pm10: Math.max(0, Math.round((aqi / 2) * 2 * 10) / 10 + (Math.random() - 0.5) * 4),
+      temperature: 28 + Math.sin((hourOfDay - 6) * Math.PI / 12) * 4 + (Math.random() - 0.5) * 2,
+      humidity: 50 + Math.cos((hourOfDay - 6) * Math.PI / 12) * 15 + (Math.random() - 0.5) * 5,
     });
   }
 

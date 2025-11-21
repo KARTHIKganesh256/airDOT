@@ -28,15 +28,20 @@ export function RealTimeAQIChart({
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
   );
 
+  const chartData = sorted.length > 0 ? sorted.map((reading) => ({
+    x: new Date(reading.timestamp).getTime(),
+    y: reading.aqi,
+  })) : [];
+
   const data: ChartData<"line"> = {
-    labels: sorted.map((reading) => reading.timestamp),
     datasets: [
       {
         label: "AQI",
-        data: sorted.map((reading) => reading.aqi),
+        data: chartData,
         borderColor: "rgba(0, 224, 255, 1)",
         borderWidth: 2,
-        pointRadius: 0,
+        pointRadius: sorted.length > 50 ? 0 : 2,
+        pointHoverRadius: 4,
         fill: true,
         tension: 0.35,
         backgroundColor: (context: { chart: { ctx: CanvasRenderingContext2D } }) =>
@@ -56,21 +61,28 @@ export function RealTimeAQIChart({
         mode: "index" as const,
         intersect: false,
         callbacks: {
-      title: (items: TooltipItem<"line">[]) => {
-        const raw = items[0].parsed.x ?? items[0].label;
-        return new Date(raw as string | number).toLocaleString(undefined, {
+          title: (items: TooltipItem<"line">[]) => {
+            if (items.length === 0) return "";
+            const raw = items[0].parsed.x ?? items[0].label;
+            const date = typeof raw === "number" ? new Date(raw) : new Date(raw as string);
+            return date.toLocaleString(undefined, {
               hour: "2-digit",
               minute: "2-digit",
               month: "short",
               day: "2-digit",
             });
           },
-          label: (item: TooltipItem<"line">) =>
-            `AQI: ${Math.round(item.parsed.y ?? 0)}`,
+          label: (item: TooltipItem<"line">) => {
+            const aqi = Math.round(item.parsed.y ?? 0);
+            return `AQI: ${aqi}`;
+          },
           afterLabel: (item: TooltipItem<"line">) => {
-            const reading = sorted[item.dataIndex];
-            if (!reading) return undefined;
-            return reading.category;
+            const index = item.dataIndex;
+            if (index >= 0 && index < sorted.length) {
+              const reading = sorted[index];
+              return reading?.category || "";
+            }
+            return "";
           },
         },
       },
