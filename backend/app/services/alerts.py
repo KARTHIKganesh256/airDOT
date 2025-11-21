@@ -75,3 +75,4 @@ def get_recent_alerts(limit: int = 10) -> list[dict[str, str]]:
 
 
 
+

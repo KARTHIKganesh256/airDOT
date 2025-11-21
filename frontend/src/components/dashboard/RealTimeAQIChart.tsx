@@ -30,14 +30,36 @@ export function RealTimeAQIChart({
   palette,
   city,
 }: RealTimeAQIChartProps) {
-  const sorted = [...readings].sort(
+  // Filter out invalid readings and sort
+  const validReadings = readings.filter(
+    (r) => r && r.timestamp && typeof r.aqi === "number" && !isNaN(r.aqi)
+  );
+  
+  const sorted = [...validReadings].sort(
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
   );
 
-  const chartData = sorted.length > 0 ? sorted.map((reading) => ({
-    x: new Date(reading.timestamp).getTime(),
-    y: reading.aqi,
-  })) : [];
+  // Ensure we have valid data
+  if (sorted.length === 0) {
+    return (
+      <Card
+        title="Real-time AQI Trend"
+        className="h-[360px]"
+      >
+        <div className="flex h-full items-center justify-center text-sm text-white/60">
+          {city ? `Waiting for data from ${city}...` : "Waiting for sensor activity..."}
+        </div>
+      </Card>
+    );
+  }
+
+  const chartData = sorted.map((reading) => {
+    const timestamp = new Date(reading.timestamp);
+    return {
+      x: timestamp.getTime(),
+      y: reading.aqi,
+    };
+  });
 
   const data: ChartData<"line"> = {
     datasets: [
@@ -51,14 +73,14 @@ export function RealTimeAQIChart({
         pointHoverBorderWidth: 3,
         pointHoverBackgroundColor: "rgba(0, 224, 255, 1)",
         pointHoverBorderColor: "#ffffff",
-        fill: "origin" as const,
+        fill: true,
         tension: 0.4,
-        backgroundColor: (context: { chart: { ctx: CanvasRenderingContext2D; chartArea?: { bottom: number; top: number } } }) => {
+        backgroundColor: (context: any) => {
           const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) {
+          if (!chart.chartArea) {
             return "rgba(0, 224, 255, 0.2)";
           }
+          const { ctx, chartArea } = chart;
           return buildGradient(ctx, chartArea);
         },
       },
@@ -147,13 +169,15 @@ export function RealTimeAQIChart({
       },
       y: {
         beginAtZero: false,
-        stacked: false,
         ticks: {
           color: "#94a3b8",
           font: {
             size: 11,
           },
           stepSize: 20,
+          callback: function(value) {
+            return Math.round(value as number);
+          },
         },
         grid: {
           color: "rgba(148, 163, 184, 0.08)",
@@ -188,13 +212,9 @@ export function RealTimeAQIChart({
       }
       className="h-[360px]"
     >
-      {sorted.length ? (
+      <div className="h-full w-full">
         <Line data={data} options={options} />
-      ) : (
-        <div className="flex h-full items-center justify-center text-sm text-white/60">
-          {city ? `Waiting for data from ${city}...` : "Waiting for sensor activity..."}
-        </div>
-      )}
+      </div>
     </Card>
   );
 }

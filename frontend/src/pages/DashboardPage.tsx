@@ -132,8 +132,8 @@ export default function DashboardPage() {
           fallback={<ChartFallback title="Real-time AQI Trend" className="h-[360px]" />}
         >
           <RealTimeAQIChart
-            city={selectedCity}
-            readings={historyQuery.data}
+            city={selectedCity || defaultCity}
+            readings={historyQuery.data || []}
             palette={latest?.palette}
           />
         </Suspense>
