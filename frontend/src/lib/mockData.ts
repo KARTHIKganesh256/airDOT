@@ -156,32 +156,77 @@ export function getMockForecast(city?: string): ForecastResponse {
     ? MOCK_CITIES.find((c) => c.city === city) || MOCK_CITIES[0]
     : MOCK_CITIES[0];
   const baseAQI = getAQIForCity(cityData.city);
-  const points = [];
+  
+  const generatePoints = (variation: number) => {
+    const points = [];
+    for (let hour = 1; hour <= 24; hour++) {
+      const targetTime = new Date();
+      targetTime.setHours(targetTime.getHours() + hour);
+      const hourOfDay = targetTime.getHours();
+      const dailyPattern = 1 + 0.3 * Math.sin((hourOfDay - 6) * Math.PI / 12);
+      const predictedAQI = Math.round(baseAQI * dailyPattern + (Math.random() - 0.5) * variation);
+      
+      points.push({
+        target_time: targetTime.toISOString(),
+        predicted_aqi: Math.max(0, Math.min(500, predictedAQI)),
+        confidence: 0.75 + Math.random() * 0.2,
+      });
+    }
+    return points;
+  };
 
-  for (let hour = 1; hour <= 24; hour++) {
-    const targetTime = new Date();
-    targetTime.setHours(targetTime.getHours() + hour);
-    // Simulate daily pattern (lower at night, higher during day)
-    const hourOfDay = targetTime.getHours();
-    const dailyPattern = 1 + 0.3 * Math.sin((hourOfDay - 6) * Math.PI / 12);
-    const predictedAQI = Math.round(baseAQI * dailyPattern + (Math.random() - 0.5) * 5);
-    
-    points.push({
-      target_time: targetTime.toISOString(),
-      predicted_aqi: Math.max(0, Math.min(500, predictedAQI)),
-      confidence: 0.75 + Math.random() * 0.2,
-    });
-  }
+  const rfPoints = generatePoints(5);
+  const lrPoints = generatePoints(8);
+  const lstmPoints = generatePoints(6);
+  
+  // Ensemble: weighted average
+  const ensemblePoints = rfPoints.map((rf, i) => ({
+    target_time: rf.target_time,
+    predicted_aqi: Math.round(
+      rf.predicted_aqi * 0.4 + 
+      lrPoints[i].predicted_aqi * 0.3 + 
+      lstmPoints[i].predicted_aqi * 0.3
+    ),
+    confidence: 0.8,
+  }));
 
   return {
     generated_at: new Date().toISOString(),
-    model_name: "Mock Forecast Model",
-    points,
+    model_name: "Multi-Model Ensemble",
+    points: ensemblePoints, // Backward compatibility
     metrics: {
-      r2: 0.85,
-      mae: 8.5,
-      rmse: 12.3,
+      r2: 0.88,
+      mae: 7.2,
+      rmse: 10.5,
       training_records: 1000,
+    },
+    models: {
+      random_forest: {
+        r2: 0.92,
+        mae: 6.5,
+        rmse: 9.2,
+      },
+      linear_regression: {
+        r2: 0.78,
+        mae: 9.8,
+        rmse: 13.5,
+      },
+      lstm: {
+        r2: 0.85,
+        mae: 8.1,
+        rmse: 11.3,
+      },
+    },
+    predictions: {
+      random_forest: rfPoints,
+      linear_regression: lrPoints,
+      lstm: lstmPoints,
+      ensemble: ensemblePoints,
+    },
+    ensemble_weights: {
+      rf: 0.4,
+      lr: 0.3,
+      lstm: 0.3,
     },
   };
 }

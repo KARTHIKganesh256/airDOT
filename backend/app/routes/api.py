@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify, request
 from ..services.alerts import get_recent_alerts
 from ..services.aqi import get_category_palette
 from ..services.model import predict_next_24, train_model_if_needed
+from ..services.ml_models import predict_with_all_models, train_all_models
 from ..services.readings import (
     get_history,
     get_latest_cache,
@@ -40,7 +41,13 @@ def register_routes(bp: Blueprint) -> None:
     @bp.get("/predict")
     def predict():
         city = request.args.get("city")
-        result = predict_next_24(city=city)
+        use_all_models = request.args.get("all_models", "true").lower() == "true"
+        
+        if use_all_models:
+            result = predict_with_all_models(city=city)
+        else:
+            # Backward compatibility
+            result = predict_next_24(city=city)
         return jsonify(result)
 
     @bp.post("/ingest")
@@ -53,7 +60,12 @@ def register_routes(bp: Blueprint) -> None:
 
     @bp.post("/train")
     def trigger_train():
-        metrics = train_model_if_needed(force=True)
+        use_all_models = request.args.get("all_models", "true").lower() == "true"
+        
+        if use_all_models:
+            metrics = train_all_models(force=True)
+        else:
+            metrics = train_model_if_needed(force=True)
         return jsonify(metrics or {"status": "no-data"})
 
 

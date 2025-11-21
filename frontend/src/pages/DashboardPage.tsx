@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { AlertsPanel } from "../components/dashboard/AlertsPanel";
 import { DashboardCards } from "../components/dashboard/DashboardCards";
 import { Recommendations } from "../components/dashboard/Recommendations";
+import { MultiModelForecast } from "../components/dashboard/MultiModelForecast";
 import { Card } from "../components/ui/Card";
 import {
   useForecast,
@@ -138,9 +139,13 @@ export default function DashboardPage() {
           />
         </Suspense>
         <Suspense
-          fallback={<ChartFallback title="24-hour AQI Prediction" className="h-[320px]" />}
+          fallback={<ChartFallback title="24-hour AQI Prediction" className="h-[400px]" />}
         >
-          <ForecastChart points={forecastQuery.data?.points} />
+          {forecastQuery.data?.predictions ? (
+            <MultiModelForecast forecastData={forecastQuery.data} />
+          ) : (
+            <ForecastChart points={forecastQuery.data?.points} />
+          )}
         </Suspense>
       </section>
 

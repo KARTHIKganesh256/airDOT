@@ -38,13 +38,30 @@ export interface ForecastResponse {
   model_name?: string;
   metrics?: ModelMetrics | null;
   points: ForecastPoint[];
+  // Multi-model support
+  models?: {
+    random_forest?: ModelMetrics;
+    linear_regression?: ModelMetrics;
+    lstm?: ModelMetrics;
+  };
+  predictions?: {
+    random_forest?: ForecastPoint[];
+    linear_regression?: ForecastPoint[];
+    lstm?: ForecastPoint[];
+    ensemble?: ForecastPoint[];
+  };
+  ensemble_weights?: {
+    rf: number;
+    lr: number;
+    lstm: number;
+  };
 }
 
 export interface ModelMetrics {
   r2: number | null;
   mae: number | null;
   rmse: number | null;
-  training_records: number;
+  training_records?: number;
 }
 
 export interface Alert {
